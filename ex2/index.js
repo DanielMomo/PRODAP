@@ -14,7 +14,7 @@ getInfoPromise = function () {
         rl.question('Digite a primeira coordenada: ', (input_coordinate) => {
         
             coordinate = input_coordinate.split(" ");
-            console.log(coordinate);
+            
             x1 = coordinate[0];
             y1 = coordinate[1];
 
@@ -22,7 +22,7 @@ getInfoPromise = function () {
                 rl.pause();
 
                 coordinate = input_coordinate.split(" ");
-                console.log(coordinate);
+            
                 x2 = coordinate[0];
                 y2 = coordinate[1];
                 
@@ -31,7 +31,6 @@ getInfoPromise = function () {
                     var2: {x: x2, y: y2}
                 };
 
-                console.log(pack);
                 resolve(pack);
             });
         });
@@ -42,10 +41,14 @@ getInfoPromise = function () {
 
 async function getInfo(numExec) {
     await getInfoPromise().then((obj) => {
-        console.log(obj.var1.x);
-        console.log(obj.var1.y);
-        console.log(obj.var2.x);
-        console.log(obj.var2.y);
+        x1 = obj.var1.x;
+        x2 = obj.var2.x;
+        y1 = obj.var1.y;
+        y2 = obj.var2.y;
+
+        result  = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)).toFixed(4);
+
+        console.log(result);
 
         getAllInfo(numExec+1);
     }).catch((error) => {
