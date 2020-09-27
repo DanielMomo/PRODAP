@@ -4,7 +4,7 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-const regex2floats = /^[-+]?[0-9]+\.[0-9]{2}$/;
+const regex2Floats = /^[-+]?[0-9]+\.[0-9]+ [-+]?[0-9]+\.[0-9]+$/;
 
 getInfoPromise = function () {
     var promise = new Promise((resolve, reject) => {
@@ -13,6 +13,11 @@ getInfoPromise = function () {
 
         rl.question('Digite a primeira coordenada: ', (input_coordinate) => {
         
+            if(!input_coordinate.match(regex2Floats)) {
+                reject("Não são dois números float separado por espaço.");
+                return;
+            }
+
             coordinate = input_coordinate.split(" ");
             
             x1 = coordinate[0];
@@ -20,6 +25,11 @@ getInfoPromise = function () {
 
             rl.question('Digite a segunda coordenada: ', (input_coordinate) => {
                 rl.pause();
+
+                if(!input_coordinate.match(regex2Floats)) {
+                    reject("Não são dois números float separado por espaço.");
+                    return;
+                }
 
                 coordinate = input_coordinate.split(" ");
             
