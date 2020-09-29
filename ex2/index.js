@@ -4,53 +4,57 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-const regex2Floats = /^[-+]?[0-9]+\.[0-9]+ [-+]?[0-9]+\.[0-9]+$/;
-
-getInfoPromise = function () {
-    var promise = new Promise((resolve, reject) => {
-        var x1, y1, x2, y2;
+function ask(questionText) {
+    return new Promise((resolve, reject) => {
         rl.resume();
-
-        rl.question('Digite a primeira coordenada: ', (input_coordinate) => {
-        
-            if(!input_coordinate.match(regex2Floats)) {
-                reject("Não são dois números float separado por espaço.");
-                return;
-            }
-
-            coordinate = input_coordinate.split(" ");
-            
-            x1 = coordinate[0];
-            y1 = coordinate[1];
-
-            rl.question('Digite a segunda coordenada: ', (input_coordinate) => {
-                rl.pause();
-
-                if(!input_coordinate.match(regex2Floats)) {
-                    reject("Não são dois números float separado por espaço.");
-                    return;
-                }
-
-                coordinate = input_coordinate.split(" ");
-            
-                x2 = coordinate[0];
-                y2 = coordinate[1];
-                
-                pack = {
-                    var1: {x: x1, y: y1},
-                    var2: {x: x2, y: y2}
-                };
-
-                resolve(pack);
-            });
-        });
+        rl.question(questionText, (input) => {
+            rl.pause();
+            resolve(input)
+        } );
     });
-
-    return promise;
 }
 
-async function getInfo(numExec) {
-    await getInfoPromise().then((obj) => {
+const regex2Floats = /^[-+]?[0-9]+\.[0-9]+ [-+]?[0-9]+\.[0-9]+$/;
+
+
+async function readCoordinates() {
+    var input_coordinate, coordinate;
+    
+    input_coordinate = await ask('Digite a primeira coordenada: ');
+    if(!input_coordinate.match(regex2Floats)) {
+        console.log("Não são dois números float de uma casa decimal separado por espaço.");
+        return false;
+    }
+
+    coordinate = input_coordinate.split(" ");
+
+    x1 = coordinate[0];
+    y1 = coordinate[1];
+
+    input_coordinate = await ask('Digite a segunda coordenada: ');
+    if(!input_coordinate.match(regex2Floats)) {
+        console.log("Não são dois números float de uma casa decimal separado por espaço.");
+        return false;
+    }
+
+    coordinate = input_coordinate.split(" ");
+            
+    x2 = coordinate[0];
+    y2 = coordinate[1];
+    
+    pack = {
+        var1: {x: x1, y: y1},
+        var2: {x: x2, y: y2}
+    };
+
+    return pack;
+}
+
+
+
+async function calcDistance(){
+    var obj = await readCoordinates();
+    if(obj){
         x1 = obj.var1.x;
         x2 = obj.var2.x;
         y1 = obj.var1.y;
@@ -59,48 +63,40 @@ async function getInfo(numExec) {
         result  = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)).toFixed(4);
 
         console.log(result);
-
-        getAllInfo(numExec+1);
-    }).catch((error) => {
-        console.log(`Erro ao processar informações: ${error.toString()}`);
-        getAllInfo(numExec+1);
-    });
+    }
+    return
 }
 
-async function getAllInfo(numExec) {
-    var promise = new Promise((resolve, reject) => {
-        if(numExec == 0) {
-            getInfo(numExec);
-        }
 
-        rl.question('Deseja fazer outra operação? (S/N)', (input_operacao) => {
-            rl.pause();
+async function menu(execute){
+    if(execute === true) {
+        await calcDistance();
+    }
 
-            switch(input_operacao) {
-                case 's':
-                case 'S':
-                case 'y':
-                case 'Y':
-                    getInfo(numExec);
-                    break;
-                case 'n':
-                case 'N':
-                    rl.close();
-                    resolve();
-                    break;
-                default:
-                    console.log("Informe S ou N");
-                    getAllInfo(numExec);
-            }
-        });
-    });
+    var operation = await ask('Deseja fazer outra operação? (S/N)\n');
 
-    return promise;
-
+    switch(operation) {
+        case 's':
+        case 'S':
+        case 'y':
+        case 'Y':
+            await menu(true);
+            break;
+        case 'n':
+        case 'N':
+            rl.close();
+            return
+        default:
+            console.log("Favor informar S ou N");
+            await menu(false);
+            break;
+    }
 }
+
 
 async function main() {
-    await getAllInfo(0);
+    await menu(true);
 }
+
 
 main();

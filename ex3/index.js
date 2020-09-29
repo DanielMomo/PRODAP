@@ -36,7 +36,7 @@ async function readEntries(entries) {
     return {arrayEven: arrayEven, arrayOdd: arrayOdd};
 }
 
-async function getInfo(){
+async function arraySort(){
     var entries;
 
     entries = await ask("Digite o numero de entradas: ");
@@ -66,9 +66,9 @@ async function getInfo(){
     return
 }
 
-async function getAllInfo(execute){
+async function menu(execute){
     if(execute === true) {
-        await getInfo();
+        await arraySort();
     }
 
     var operation = await ask('Deseja fazer outra operação? (S/N)\n');
@@ -78,7 +78,7 @@ async function getAllInfo(execute){
         case 'S':
         case 'y':
         case 'Y':
-            await getAllInfo(true);
+            await menu(true);
             break;
         case 'n':
         case 'N':
@@ -86,13 +86,13 @@ async function getAllInfo(execute){
             return
         default:
             console.log("Favor informar S ou N");
-            await getAllInfo(false);
+            await menu(false);
             break;
     }
 }
 
 async function main() {
-    await getAllInfo(true);
+    await menu(true);
 }
 
 main();
